@@ -2,11 +2,12 @@
 {
     public interface ICharacterService
     {
-        List<Character> GetAllCharacters();
+        //Task is needed when async is used: ServiceResponse is from ServiceResponse Class to send messages
+        Task<ServiceResponse<List<Character>>> GetAllCharacters();
 
-        Character GetCharacterById(int id);
+        Task<ServiceResponse<Character>> GetCharacterById(int id);
 
-        List<Character> AddCharacter(Character newCharacter);
+        Task<ServiceResponse<List<Character>>> AddCharacter(Character newCharacter);
 
 
     }
