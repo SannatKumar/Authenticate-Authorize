@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ServiceButtonBackend.Controllers
 {
     [ApiController]
-    [Route("api/v-1")]
+    [Route("api/v-1/character")]
     public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _characterService;
