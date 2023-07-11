@@ -1,4 +1,5 @@
 global using AutoMapper;
+global using Microsoft.EntityFrameworkCore;
 global using ServiceButtonBackend.Models;
 global using ServiceButtonBackend.Services.CharacterService;
 global using ServiceButtonBackend.Dtos.Character;
