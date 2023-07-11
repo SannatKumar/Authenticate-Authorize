@@ -1,6 +1,8 @@
+global using AutoMapper;
 global using ServiceButtonBackend.Models;
 global using ServiceButtonBackend.Services.CharacterService;
 global using ServiceButtonBackend.Dtos.Character;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Register The Auto Mapper
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+//Register The service
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 
 var app = builder.Build();
