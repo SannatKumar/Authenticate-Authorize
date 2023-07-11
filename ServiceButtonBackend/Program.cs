@@ -1,5 +1,6 @@
 global using ServiceButtonBackend.Models;
 global using ServiceButtonBackend.Services.CharacterService;
+global using ServiceButtonBackend.Dtos.Character;
 
 var builder = WebApplication.CreateBuilder(args);
 
