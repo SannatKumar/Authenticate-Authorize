@@ -21,7 +21,8 @@ builder.Services.AddSwaggerGen();
 
 //Register The Auto Mapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
+//Register The Authentication service
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 //Register The service
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 
