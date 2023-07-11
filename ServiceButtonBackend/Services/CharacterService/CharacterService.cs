@@ -55,6 +55,10 @@ namespace ServiceButtonBackend.Services.CharacterService
             {
                 
                 var character = characters.FirstOrDefault(c => c.Id == updatedCharacter.Id);
+                if(character is null)
+                {
+                    throw new Exception($"Character with Id '{updatedCharacter.Id}' not found.");
+                }
 
                 character.Name = updatedCharacter.Name;
                 character.HitPoints = updatedCharacter.HitPoints;
