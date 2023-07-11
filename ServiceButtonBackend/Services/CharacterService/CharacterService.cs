@@ -60,6 +60,12 @@ namespace ServiceButtonBackend.Services.CharacterService
                     throw new Exception($"Character with Id '{updatedCharacter.Id}' not found.");
                 }
 
+                /*
+                //Another Options
+
+                _mapper.Map(updatedCharacter, character);
+                */
+
                 character.Name = updatedCharacter.Name;
                 character.HitPoints = updatedCharacter.HitPoints;
                 character.Strength = updatedCharacter.Strength;
