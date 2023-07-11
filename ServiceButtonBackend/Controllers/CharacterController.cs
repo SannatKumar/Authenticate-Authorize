@@ -28,10 +28,16 @@ namespace ServiceButtonBackend.Controllers
             return Ok(await _characterService.GetCharacterById(id));
         }
 
-        [HttpPost("character/add")]
+        [HttpPost("add")]
         public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> AddCharacter(AddCharacterDto newCharacter)
         {
             return Ok(await _characterService.AddCharacter(newCharacter));
+        }
+
+        [HttpPost("update")]
+        public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+        {
+            return Ok(await _characterService.UpdateCharacter(updatedCharacter));
         }
 
 
