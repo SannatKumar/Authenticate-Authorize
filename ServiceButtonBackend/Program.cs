@@ -3,12 +3,17 @@ global using Microsoft.EntityFrameworkCore;
 global using ServiceButtonBackend.Models;
 global using ServiceButtonBackend.Services.CharacterService;
 global using ServiceButtonBackend.Dtos.Character;
-
+global using ServiceButtonBackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// Add services to the container.
+//Register the Db Context
+builder.Services.AddDbContext<DataContext>(options => 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//Register the controllers
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
