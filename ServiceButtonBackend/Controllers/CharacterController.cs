@@ -1,9 +1,11 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace ServiceButtonBackend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v-1/character")]
     public class CharacterController : ControllerBase
