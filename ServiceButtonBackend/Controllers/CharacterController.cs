@@ -34,7 +34,7 @@ namespace ServiceButtonBackend.Controllers
             return Ok(await _characterService.AddCharacter(newCharacter));
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
         {
             var response = await _characterService.UpdateCharacter(updatedCharacter);
