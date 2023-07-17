@@ -43,10 +43,10 @@ namespace ServiceButtonBackend.Controllers
         }
 
         [HttpPost("refesh-token")]
-        public async Task<ActionResult<ServiceResponse<int>>> RefreshToken()
+        public async Task<ActionResult<ServiceResponse<int>>> RefreshToken(string refreshToken)
         {
             //Get The Refresh Token from The Cookies
-            var refreshToken = Request.Cookies["refreshToken"];
+           // var refreshToken = Request.Cookies["refreshToken"];
             var response = await _authRepo.RefreshToken(refreshToken!);
 
             if (!response.Success)
