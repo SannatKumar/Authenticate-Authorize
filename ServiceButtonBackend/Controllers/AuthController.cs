@@ -4,7 +4,7 @@ using ServiceButtonBackend.Dtos.User;
 namespace ServiceButtonBackend.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/v1/")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _authRepo;
@@ -14,7 +14,7 @@ namespace ServiceButtonBackend.Controllers
             _authRepo = authRepo;
         }
 
-        [HttpPost("register")]
+        [HttpPost("sign-up")]
         public async Task<ActionResult<ServiceResponse<int>>> Register(UserRegisterDto request)
         {
             var response = await _authRepo.Register(
@@ -29,7 +29,7 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
-        [HttpPost("login")]
+        [HttpPost("sign-in")]
         public async Task<ActionResult<ServiceResponse<int>>> Login(UserLoginDto request)
         {
             var response = await _authRepo.Login(request.Username, request.Password);
@@ -42,13 +42,12 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
-        /*
         [HttpPost("refesh-token")]
         public async Task<ActionResult<ServiceResponse<int>>> RefreshToken()
         {
-            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
+            //Get The Refresh Token from The Cookies
             var refreshToken = Request.Cookies["refreshToken"];
-            var response = await _authRepo.RefreshToken(refreshToken!, currentUser);
+            var response = await _authRepo.RefreshToken(refreshToken!);
 
             if (!response.Success)
             {
@@ -57,7 +56,7 @@ namespace ServiceButtonBackend.Controllers
 
             return Ok(response);
         }
-        */
+       
 
 
     }

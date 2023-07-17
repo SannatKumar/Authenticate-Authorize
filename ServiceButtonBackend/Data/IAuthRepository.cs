@@ -1,4 +1,6 @@
-﻿namespace ServiceButtonBackend.Data
+﻿using System.Security.Claims;
+
+namespace ServiceButtonBackend.Data
 {
     public interface IAuthRepository
     {

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceButtonBackend.Dtos.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using ServiceButtonBackend.Services.UserService;
 
 namespace ServiceButtonBackend.Data
 {
@@ -16,17 +17,23 @@ namespace ServiceButtonBackend.Data
     {
         //For Db Context
         private readonly DataContext _context;
+
         //For IConfiguration
         private readonly IConfiguration _configuration;
+
         ////For Context Accessor
         private readonly IHttpContextAccessor _contextAccessor;
 
-        //Create a Constructor for the DataContext, Configuration and HttpContext Accessor
-        public AuthRepository(DataContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor)
+        //For User Service
+        private readonly IUserService _userService;
+
+        //Create a Constructor for the DataContext, Configuration and HttpContext Accessor And User Service
+        public AuthRepository(DataContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor, IUserService userService)
         {
             _context = context;
             _configuration = configuration;
             _contextAccessor = contextAccessor;
+            _userService = userService;
         }
 
         //Function to login the User
@@ -229,43 +236,55 @@ namespace ServiceButtonBackend.Data
             return newRefreshToken.ToString()!;
 
         }
-
-        public Task<ServiceResponse<string>> RefreshToken(string refreshToken)
+        //Get New Access Token and Refresh The Refresh Token 
+        public async Task<ServiceResponse<string>> RefreshToken(string refreshToken)
         {
-            throw new NotImplementedException();
+            //New Response Object
+            var response = new ServiceResponse<string>();
+
+            //Get The User ID
+            var userId = _userService.GetUserId();
+
+            //Get User Here
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            //Get The Old Refresh Token
+            var oldRefreshToken = refreshToken;
+
+            //Get the existing token if exist  
+            var existingRefreshToken = await _context.UserRefreshToken.FirstOrDefaultAsync(u => u.UserId == userId);
+            //check for Null
+            if(existingRefreshToken is null)
+            {
+                response.Success = false;
+                response.Message = "Refresh Token Does Not Exist for this User.";
+                return response;
+            }
+
+            if (!existingRefreshToken.RefreshToken.Equals(refreshToken))
+            {
+                response.Success = false;
+                response.Message = "Refresh Token is not Matching.";
+                return response;
+            }
+            else if (existingRefreshToken.TokenExpiresAt < DateTime.Now)
+            {
+                response.Success = false;
+                response.Message = "Refresh Token Has Expired.";
+                return response;
+            }
+
+            //Set the user data to response.Data
+            if(user is not null)
+            {
+                response.Data = CreateToken(user);
+                var newRefreshToken = GenerateRefreshToken(user.Id);
+                var myToken = SetRefreshToken(await newRefreshToken);
+            }
+
+            
+            return response;
         }
-
-        /*
-        public Task<ServiceResponse<string>> RefreshToken(string refreshToken, ClaimsPrincipal user)
-        {
-            //var user = string.Empty;
-
-            //if(_contextAccessor.HttpContext != null)
-            //{
-            //    string loggedUser  = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
-            //}
-
-
-
-
-
-
-            ////if (!user.RefreshToken.Equals(refreshToken))
-            ////{
-            ////    return Unauthorized("Invalid Refresh Token");
-            ////}
-            ////else if (user.TokenExpires < DateTime.Now)
-            ////{
-            ////    return Unauthorized("Token expired");
-            ////}
-
-            ////string token = CreateToken(user);
-            ////var newRefreshToken = GenerateRefreshToken();
-            ////SetRefreshToken(newRefreshToken);
-
-            //return Ok(token);
-        }
-        */
 
 
 
