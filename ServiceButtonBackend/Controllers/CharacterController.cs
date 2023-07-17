@@ -19,26 +19,26 @@ namespace ServiceButtonBackend.Controllers
 
         [HttpGet("getall")]
         
-        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> Get()
+        public async Task<ActionResult<ServiceRespone<GetCharacterDto>>> Get()
         {
             int id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
             return Ok(await _characterService.GetAllCharacters());
         }
 
         [HttpGet("getsingle")]
-        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> GetSingle(int id)
+        public async Task<ActionResult<ServiceRespone<GetCharacterDto>>> GetSingle(int id)
         {
             return Ok(await _characterService.GetCharacterById(id));
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> AddCharacter(AddCharacterDto newCharacter)
+        public async Task<ActionResult<ServiceRespone<List<GetCharacterDto>>>> AddCharacter(AddCharacterDto newCharacter)
         {
             return Ok(await _characterService.AddCharacter(newCharacter));
         }
 
         [HttpPut("update")]
-        public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+        public async Task<ActionResult<ServiceRespone<List<GetCharacterDto>>>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
         {
             var response = await _characterService.UpdateCharacter(updatedCharacter);
             if (response.Data is null)
@@ -49,7 +49,7 @@ namespace ServiceButtonBackend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> DeleteCharacter(int id)
+        public async Task<ActionResult<ServiceRespone<GetCharacterDto>>> DeleteCharacter(int id)
         {
             var response = await _characterService.DeleteCharacter(id);
             if (response.Data is null)

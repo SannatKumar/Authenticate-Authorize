@@ -12,5 +12,7 @@ namespace ServiceButtonBackend.Data
         public DbSet<User> Users => Set<User>();
 
         public DbSet<UserRefreshTokenDto> UserRefreshToken => Set<UserRefreshTokenDto>();
+
+        public DbSet<UserDetail> UserDetails => Set<UserDetail>();
     }
 }

@@ -1,15 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Azure;
 using System.Security.Cryptography;
-using ServiceButtonBackend.Models;
-using Microsoft.AspNetCore.Mvc;
 using ServiceButtonBackend.Dtos.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using ServiceButtonBackend.Services.UserService;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
+using ServiceButtonBackend.Models;
 
 namespace ServiceButtonBackend.Data
 {
@@ -37,41 +33,60 @@ namespace ServiceButtonBackend.Data
         }
 
         //Function to login the User
-        public async Task<ServiceResponse<string>> Login(string username, string password)
+        public async Task<AuthServiceRespone<string>> Login(string username, string password)
         {
-            var response = new ServiceResponse<string>();
+            //var response = new ServiceRespone<string>();
+            var authResponse = new AuthServiceRespone<string>();
             //check if user exist
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
 
             //check the user is not null
             if (user is null) 
             {
-                response.Success = false;
-                response.Message = "User not Found.";
-                return response;
+                authResponse.Success = false;
+                authResponse.Message = "User not Found.";
+                return authResponse;
             }
             //check the password is verified
             if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
             {
-                response.Success = false;
-                response.Message = "Wrong Password.";
-                return response;
+                authResponse.Success = false;
+                authResponse.Message = "Wrong Password.";
+                return authResponse;
             }
 
             //Set the user data to response.Data
-            response.Data = CreateToken(user);
+            //response.Data = CreateToken(user);
+            authResponse.Data = CreateToken(user);
             var refreshToken = GenerateRefreshToken(user.Id);
             var myToken = SetRefreshToken(await refreshToken);
-            
+
+            var userDetails = await _context.UserDetails.FirstOrDefaultAsync(u => u.UserId == user.Id);
+
+
+            LoginResponseDto loginResponse = new LoginResponseDto();
+            if(userDetails is not null)
+            {
+
+                loginResponse.Id = userDetails.Id;
+                loginResponse.Email = userDetails.Email;
+                loginResponse.User = user.Username;
+                loginResponse.Locale = userDetails.Locale;
+            }
+
+            authResponse.UserDetail = loginResponse;
+
+            //var dbPagePermissions = await _context.vUserPermissions
+
             //Return Response
-            return response;
+            return authResponse;
         }
 
         //Register User 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
+        public async Task<ServiceRespone<int>> Register(User user, string password)
         {
             //Create a new Response Object
-            var response = new ServiceResponse<int>();
+            var response = new ServiceRespone<int>();
 
             //Check if user already Exists and return the Messages
             if(await UserExists(user.Username))
@@ -237,10 +252,10 @@ namespace ServiceButtonBackend.Data
 
         }
         //Get New Access Token and Refresh The Refresh Token 
-        public async Task<ServiceResponse<string>> RefreshToken(string refreshToken)
+        public async Task<ServiceRespone<string>> RefreshToken(string refreshToken)
         {
             //New Response Object
-            var response = new ServiceResponse<string>();
+            var response = new ServiceRespone<string>();
 
             //Get The User ID
             var userId = _userService.GetUserId();

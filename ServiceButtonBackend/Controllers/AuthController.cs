@@ -15,7 +15,7 @@ namespace ServiceButtonBackend.Controllers
         }
 
         [HttpPost("sign-up")]
-        public async Task<ActionResult<ServiceResponse<int>>> Register(UserRegisterDto request)
+        public async Task<ActionResult<ServiceRespone<int>>> Register(UserRegisterDto request)
         {
             var response = await _authRepo.Register(
                 new User { Username = request.Username }, request.Password
@@ -30,7 +30,7 @@ namespace ServiceButtonBackend.Controllers
         }
 
         [HttpPost("sign-in")]
-        public async Task<ActionResult<ServiceResponse<int>>> Login(UserLoginDto request)
+        public async Task<ActionResult<ServiceRespone<int>>> Login(UserLoginDto request)
         {
             var response = await _authRepo.Login(request.Username, request.Password);
 
@@ -43,7 +43,7 @@ namespace ServiceButtonBackend.Controllers
         }
 
         [HttpPost("refesh-token")]
-        public async Task<ActionResult<ServiceResponse<int>>> RefreshToken(string refreshToken)
+        public async Task<ActionResult<ServiceRespone<int>>> RefreshToken(string refreshToken)
         {
             //Get The Refresh Token from The Cookies
            // var refreshToken = Request.Cookies["refreshToken"];

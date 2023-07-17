@@ -22,9 +22,9 @@ namespace ServiceButtonBackend.Services.CharacterService
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
+        public async Task<ServiceRespone<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
         {
-            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+            var serviceResponse = new ServiceRespone<List<GetCharacterDto>>();
             var character = _mapper.Map<Character>(newCharacter);
 
             _context.Characters.Add(character);
@@ -34,9 +34,9 @@ namespace ServiceButtonBackend.Services.CharacterService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetCharacterDto>>> DeleteCharacter(int id)
+        public async Task<ServiceRespone<List<GetCharacterDto>>> DeleteCharacter(int id)
         {
-            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+            var serviceResponse = new ServiceRespone<List<GetCharacterDto>>();
             try
             {
 
@@ -61,19 +61,19 @@ namespace ServiceButtonBackend.Services.CharacterService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
+        public async Task<ServiceRespone<List<GetCharacterDto>>> GetAllCharacters()
         {
-            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+            var serviceResponse = new ServiceRespone<List<GetCharacterDto>>();
             var dbCharacters = await _context.Characters.ToListAsync();
             serviceResponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return serviceResponse;
         }
 
         //public Character? GetCharacterById(int id)
-        public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
+        public async Task<ServiceRespone<GetCharacterDto>> GetCharacterById(int id)
         {
             //return characters.FirstOrDefault(c => c.Id == id)!;
-            var serviceResponse = new ServiceResponse<GetCharacterDto>();
+            var serviceResponse = new ServiceRespone<GetCharacterDto>();
             var dbCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
 
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(dbCharacter);
@@ -82,9 +82,9 @@ namespace ServiceButtonBackend.Services.CharacterService
 
         }
 
-        public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+        public async Task<ServiceRespone<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
         {
-            var serviceResponse = new ServiceResponse<GetCharacterDto>();
+            var serviceResponse = new ServiceRespone<GetCharacterDto>();
             try
             {
                 

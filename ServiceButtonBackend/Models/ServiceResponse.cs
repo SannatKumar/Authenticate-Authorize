@@ -1,6 +1,6 @@
 ﻿namespace ServiceButtonBackend.Models
 {
-    public class ServiceResponse<T>
+    public class ServiceRespone<T>
     {
         public T? Data { get; set; }
 
