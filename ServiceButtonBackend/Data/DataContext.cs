@@ -14,5 +14,7 @@ namespace ServiceButtonBackend.Data
         public DbSet<UserRefreshTokenDto> UserRefreshToken => Set<UserRefreshTokenDto>();
 
         public DbSet<UserDetail> UserDetails => Set<UserDetail>();
+
+        public DbSet<UserPagePermission> vUserPermissions => Set<UserPagePermission>();
     }
 }
