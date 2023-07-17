@@ -8,5 +8,7 @@
 
         Task<bool> UserExists(string username);
 
+        Task<ServiceResponse<string>> RefreshToken(string refreshToken);
+
     }
 }

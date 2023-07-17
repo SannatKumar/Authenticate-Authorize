@@ -42,6 +42,21 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
+        [HttpPost("refesh-token")]
+        public async Task<ActionResult<ServiceResponse<int>>> RefreshToken()
+        {
+            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
+            var refreshToken = Request.Cookies["refreshToken"];
+            var response = await _authRepo.RefreshToken(refreshToken!, currentUser);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
 
     }
 }

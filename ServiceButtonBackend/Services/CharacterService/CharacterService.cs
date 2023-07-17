@@ -6,11 +6,11 @@ namespace ServiceButtonBackend.Services.CharacterService
 {
     public class CharacterService : ICharacterService
     {
-        private readonly List<Character> characters = new List<Character>
-        {
-            new Character(),
-            new Character() {Id = 1, Name = "Sam"}
-        };
+        //private readonly List<Character> characters = new List<Character>
+        //{
+        //    new Character(),
+        //    new Character() {Id = 1, Name = "Sam"}
+        //};
 
         //For AutoMapper
         private readonly IMapper _mapper;

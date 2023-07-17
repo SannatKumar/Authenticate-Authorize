@@ -1,4 +1,5 @@
-﻿namespace ServiceButtonBackend.Data
+﻿using ServiceButtonBackend.Dtos.User;
+namespace ServiceButtonBackend.Data
 {
     public class DataContext : DbContext
     {
@@ -9,5 +10,7 @@
         public DbSet<Character> Characters => Set<Character>();
 
         public DbSet<User> Users => Set<User>();
+
+        public DbSet<UserRefreshTokenDto> UserRefreshToken => Set<UserRefreshTokenDto>();
     }
 }
