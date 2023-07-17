@@ -42,6 +42,7 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
+        /*
         [HttpPost("refesh-token")]
         public async Task<ActionResult<ServiceResponse<int>>> RefreshToken()
         {
@@ -56,6 +57,7 @@ namespace ServiceButtonBackend.Controllers
 
             return Ok(response);
         }
+        */
 
 
     }

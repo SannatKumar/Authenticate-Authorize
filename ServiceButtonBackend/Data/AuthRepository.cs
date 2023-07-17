@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Azure;
 using System.Security.Cryptography;
-using ServiceButtonBackend.Services.UserService;
 using ServiceButtonBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using ServiceButtonBackend.Dtos.User;
@@ -19,17 +18,18 @@ namespace ServiceButtonBackend.Data
         private readonly DataContext _context;
         //For IConfiguration
         private readonly IConfiguration _configuration;
-        //For Context Accessor
-        private readonly IUserService _userService;
+        ////For Context Accessor
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public AuthRepository(DataContext context, IConfiguration configuration, IUserService userService, IHttpContextAccessor contextAccessor)
+        //Create a Constructor for the DataContext, Configuration and HttpContext Accessor
+        public AuthRepository(DataContext context, IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _configuration = configuration;
-            _userService = userService;
             _contextAccessor = contextAccessor;
         }
+
+        //Function to login the User
         public async Task<ServiceResponse<string>> Login(string username, string password)
         {
             var response = new ServiceResponse<string>();
@@ -50,42 +50,49 @@ namespace ServiceButtonBackend.Data
                 response.Message = "Wrong Password.";
                 return response;
             }
+
             //Set the user data to response.Data
             response.Data = CreateToken(user);
             var refreshToken = GenerateRefreshToken(user.Id);
-            var myToken = SetRefreshToken(refreshToken);
+            var myToken = SetRefreshToken(await refreshToken);
             
-
+            //Return Response
             return response;
         }
 
         //Register User 
         public async Task<ServiceResponse<int>> Register(User user, string password)
         {
+            //Create a new Response Object
             var response = new ServiceResponse<int>();
 
+            //Check if user already Exists and return the Messages
             if(await UserExists(user.Username))
             {
                 response.Success = false;
                 response.Message = "User already Exists.";
                 return response;
             }
+            //Generate Password hash and Password Salt
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            //Assign the newly created Passwword Hash and Salt to user
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-
+            //Add The user to the context and Save Changes
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             
-            response.Data = user.Id;
+            //Set Response Data to 1 or True adn Return Response
+            response.Data = 1;
             return response;
         }
 
         //Check If user Already Exists
         public async Task<bool> UserExists(string username)
         {
+            //Check from User Table if the user already exists
             if(await _context.Users.AnyAsync(u => u.Username.ToLower() == username.ToLower()))
             {
                 return true;
@@ -96,6 +103,7 @@ namespace ServiceButtonBackend.Data
         //Create Password Hash and Salt
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
+            //Creae a PasswordHash and Password Salt using System.Security.Cryptography
             using(var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
@@ -107,6 +115,7 @@ namespace ServiceButtonBackend.Data
         //Verify Password Hash
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
+            //Verify Password Hash using the hmac computed Hash
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -118,6 +127,7 @@ namespace ServiceButtonBackend.Data
         //Create Token
         private string CreateToken(User user)
         {
+            //Use Claims to create a token with user ID, User Name and Role
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -125,7 +135,9 @@ namespace ServiceButtonBackend.Data
                 new Claim(ClaimTypes.Role, "Admin")
             };
 
+            //Get the Token from appsettings using the configuration  
             var appSettingsToken = _configuration.GetSection("AppSettings:Token").Value;
+            //Check if Appsettings is null
             if(appSettingsToken is null)
             {
                 throw new Exception("AppSettings Token is null!");
@@ -153,6 +165,7 @@ namespace ServiceButtonBackend.Data
         //Refresh Token
         private async Task<RefreshToken> GenerateRefreshToken(int userId)
         {
+            //Generate new refresh Token
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
@@ -160,37 +173,69 @@ namespace ServiceButtonBackend.Data
                 Created = DateTime.Now
             };
 
+            //Prepare the token model and assign the new generated token and its properties
             UserRefreshTokenDto dbRefreshToken = new UserRefreshTokenDto();
             dbRefreshToken.UserId = userId;
             dbRefreshToken.RefreshToken = refreshToken.Token;
             dbRefreshToken.TokenExpiresAt = refreshToken.Expires;
             dbRefreshToken.TokenCreated = refreshToken.Created;
 
-            _context.UserRefreshToken.Add(dbRefreshToken);
+            //Get the existing token if exist  
+            var existingRefreshToken = await _context.UserRefreshToken.FirstOrDefaultAsync(u => u.UserId == userId);
+            //if exist update the new values else add a new row to the table
+            if (existingRefreshToken != null) 
+            {
+                existingRefreshToken.RefreshToken = refreshToken.Token;
+                existingRefreshToken.TokenExpiresAt = refreshToken.Expires;
+                existingRefreshToken.TokenCreated = refreshToken.Created;
+            }
+            else
+            {
+                _context.UserRefreshToken.Add(dbRefreshToken);
+            }
+
+            //Finally Save the Changes 
             await _context.SaveChangesAsync();
 
+            //Return Token to the calling function
             return refreshToken;
         }
 
         ////Set Refresh Token
         private string SetRefreshToken(RefreshToken newRefreshToken)
         {
+            // Create a new variable with the Cookie Options 
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = newRefreshToken.Expires,
             };
-            //Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
+
+            //Access The httpcontext so that the response can be used outsisde Controllers. 
+            var httpContext = _contextAccessor.HttpContext;
+            if (httpContext == null)
+            {
+                // Handle the case when HttpContext is not available (e.g., during testing).
+                throw new InvalidOperationException("HttpContext is not available.");
+            }
+            //Append The cookies to the response of this http Context
+            httpContext.Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
 
             //user.RefreshToken = newRefreshToken.Token;
             //user.TokenCreated = newRefreshToken.Created;
             //user.TokenExpires = newRefreshToken.Expires;
 
+
             return newRefreshToken.ToString()!;
 
         }
 
+        public Task<ServiceResponse<string>> RefreshToken(string refreshToken)
+        {
+            throw new NotImplementedException();
+        }
 
+        /*
         public Task<ServiceResponse<string>> RefreshToken(string refreshToken, ClaimsPrincipal user)
         {
             //var user = string.Empty;
@@ -220,7 +265,10 @@ namespace ServiceButtonBackend.Data
 
             //return Ok(token);
         }
-        
+        */
+
+
+
 
     }
 }
