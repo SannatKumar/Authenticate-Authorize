@@ -4,8 +4,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using ServiceButtonBackend.Dtos.User;
 using ServiceButtonBackend.Services.UserService;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
-using ServiceButtonBackend.Models;
 
 namespace ServiceButtonBackend.Data
 {
