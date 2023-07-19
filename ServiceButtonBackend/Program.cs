@@ -12,9 +12,18 @@ using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
 using ServiceButtonBackend.Services.UserService;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins("http://192.168.0.77:8080", "https://192.168.0.77:8080").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+        });
+});
 
 // Add services to the container.
 //Register the Db Context
@@ -68,6 +77,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//Cofigure CORS POLICY
+app.UseCors();
 //Add Authentication before Authorization
 app.UseAuthentication();
 

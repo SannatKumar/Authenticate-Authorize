@@ -74,7 +74,10 @@ namespace ServiceButtonBackend.Data
 
             authResponse.UserDetail = loginResponse;
 
-            //var dbPagePermissions = await _context.vUserPermissions
+            //Ge The Permissions for the user details.
+            List<UserPermission> dbPagePermissions = await _context.v_user_permission.Where(u => u.UserId == user.Id).ToListAsync();
+
+            authResponse.UserPermisssion = dbPagePermissions;
 
             //Return Response
             return authResponse;

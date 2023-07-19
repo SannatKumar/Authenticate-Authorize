@@ -8,7 +8,7 @@ namespace ServiceButtonBackend.Models
 
         public LoginResponseDto? UserDetail { get; set; }
 
-        public T? UserPermisssion { get; set; }
+        public List<UserPermission>? UserPermisssion { get; set; }
 
         public bool Success { get; set; } = true;
 

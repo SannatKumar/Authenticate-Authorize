@@ -1,4 +1,5 @@
 ﻿using ServiceButtonBackend.Dtos.User;
+
 namespace ServiceButtonBackend.Data
 {
     public class DataContext : DbContext
@@ -15,6 +16,8 @@ namespace ServiceButtonBackend.Data
 
         public DbSet<UserDetail> UserDetails => Set<UserDetail>();
 
-        public DbSet<UserPagePermission> vUserPermissions => Set<UserPagePermission>();
+#pragma warning disable IDE1006 // Naming Styles
+        public DbSet<UserPermission> v_user_permission => Set<UserPermission>();
+#pragma warning restore IDE1006 // Naming Styles
     }
 }
