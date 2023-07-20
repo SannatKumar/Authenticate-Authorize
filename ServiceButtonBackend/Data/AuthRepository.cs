@@ -55,7 +55,7 @@ namespace ServiceButtonBackend.Data
 
             //Set the user data to response.Data
             //response.Data = CreateToken(user);
-            authResponse.Data = CreateToken(user);
+            authResponse.token = CreateToken(user);
             var refreshToken = GenerateRefreshToken(user.Id);
             var myToken = SetRefreshToken(await refreshToken);
 

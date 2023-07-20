@@ -4,7 +4,9 @@ namespace ServiceButtonBackend.Models
 {
     public class AuthServiceRespone<T>
     {
-        public T? Data { get; set; }
+        //public T? Data { get; set; }
+
+        public T? token { get; set; }
 
         public LoginResponseDto? UserDetail { get; set; }
 
