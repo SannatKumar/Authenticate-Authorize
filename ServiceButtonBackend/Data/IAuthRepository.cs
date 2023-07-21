@@ -12,5 +12,7 @@ namespace ServiceButtonBackend.Data
 
         Task<ServiceRespone<string>> RefreshToken(string refreshToken);
 
+        Task<AuthServiceRespone<string>> GetMe();
+
     }
 }

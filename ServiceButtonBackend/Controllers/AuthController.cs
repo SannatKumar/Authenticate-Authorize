@@ -56,7 +56,20 @@ namespace ServiceButtonBackend.Controllers
 
             return Ok(response);
         }
-       
+
+        [HttpPost("me")]
+        public async Task<AuthServiceRespone<string>> GetMe()
+        {
+            var response = await _authRepo.GetMe();
+            //var response = "Something"; 
+            //if (!response.Success)
+            //{
+            //    return BadRequest(response);
+            //}
+
+            return Ok(response);
+        }
+
 
 
     }

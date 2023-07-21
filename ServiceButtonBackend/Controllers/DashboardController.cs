@@ -17,15 +17,15 @@ namespace ServiceButtonBackend.Controllers
 
         }
 
-        [HttpPost("dashboard")]
-        public async Task<IActionResult> GetDashboardData()
+        [HttpGet("dashboard")]
+        public async Task<ActionResult<Dictionary<string, int>>> GetDashboardData()
         {
             var response = await _dashboardService.GetDashboardData();
 
-            if (!response.Success)
-            {
-                return BadRequest(response);
-            }
+            //if (!response.success)
+            //{
+            //    return badrequest(response);
+            //}
 
             return Ok(response);
         }

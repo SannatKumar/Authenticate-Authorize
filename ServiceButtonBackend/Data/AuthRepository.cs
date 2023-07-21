@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using ServiceButtonBackend.Dtos.User;
 using ServiceButtonBackend.Services.UserService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceButtonBackend.Data
 {
@@ -300,6 +301,35 @@ namespace ServiceButtonBackend.Data
 
             
             return response;
+        }
+
+        public async Task<AuthServiceRespone<string>> GetMe()
+        {
+            //Auth Response
+            var authResponse = new AuthServiceRespone<string>();
+
+            //Get The User ID
+            var userId = _userService.GetUserId();
+
+            //Get User From Database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            //check the user is not null
+            if (user is null)
+            {
+                authResponse.Success = false;
+                authResponse.Message = "User not Found.";
+                return authResponse;
+            }
+
+
+
+
+
+
+
+
+
         }
 
 

@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using ServiceButtonBackend.Services.UserService;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Net;
+using ServiceButtonBackend.Services.DashboardService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //Register The Authentication service
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 //Register The service
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
