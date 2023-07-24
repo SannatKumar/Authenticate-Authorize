@@ -322,13 +322,41 @@ namespace ServiceButtonBackend.Data
                 return authResponse;
             }
 
+            ////check the password is verified
+            //if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            //{
+            //    authResponse.Success = false;
+            //    authResponse.Message = "Wrong Password.";
+            //    return authResponse;
+            //}
+
+            //Set the user data to response.Data
+            //response.Data = CreateToken(user);
+            authResponse.token = CreateToken(user);
+            var refreshToken = GenerateRefreshToken(user.Id);
+            var myToken = SetRefreshToken(await refreshToken);
+
+            var userDetails = await _context.UserDetails.FirstOrDefaultAsync(u => u.UserId == user.Id);
 
 
+            LoginResponseDto loginResponse = new LoginResponseDto();
+            if (userDetails is not null)
+            {
 
+                loginResponse.Id = userDetails.Id;
+                loginResponse.Email = userDetails.Email;
+                loginResponse.User = user.Username;
+                loginResponse.Locale = userDetails.Locale;
+            }
 
+            authResponse.UserDetail = loginResponse;
 
+            //Ge The Permissions for the user details.
+            List<UserPermission> dbPagePermissions = await _context.v_user_permission.Where(u => u.UserId == user.Id).ToListAsync();
 
+            authResponse.UserPermisssion = dbPagePermissions;
 
+            return authResponse;
 
         }
 

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceButtonBackend.Dtos.User;
 using ServiceButtonBackend.Services.DashboardService;
 
 namespace ServiceButtonBackend.Controllers
 {
+    //[Authorize]
     [Route("api/v1/")]
     [ApiController]
     public class DashboardController : ControllerBase
