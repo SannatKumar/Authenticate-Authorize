@@ -156,7 +156,9 @@ namespace ServiceButtonBackend.Data
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, "Admin")
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim("aud", "https://192.168.0.77:7001"),
+                new Claim("iss", "https://192.168.0.77:7001")
             };
 
             //Get the Token from appsettings using the configuration  

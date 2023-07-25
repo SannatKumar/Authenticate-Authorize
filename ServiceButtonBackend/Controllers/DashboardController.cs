@@ -6,7 +6,7 @@ using ServiceButtonBackend.Services.DashboardService;
 
 namespace ServiceButtonBackend.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/")]
     [ApiController]
     public class DashboardController : ControllerBase

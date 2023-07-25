@@ -43,6 +43,8 @@ namespace ServiceButtonBackend.Controllers
                 // Set the cookie
                 Response.Cookies.Append("token", response.token, new Microsoft.AspNetCore.Http.CookieOptions
                 {
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
                     Expires = DateTime.UtcNow.AddDays(7),
                     HttpOnly = true // The cookie can only be accessed through HTTP requests (not JavaScript)
                                     // Other options like domain, path, etc., can be set as needed

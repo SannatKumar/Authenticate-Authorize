@@ -44,7 +44,9 @@ builder.Services.AddSwaggerGen(c =>
         Description = """Standard Authorization header using the bearer Scheme. Example: "bearer {token}" """,
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey 
+        //Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
 
     });
     c.OperationFilter<SecurityRequirementsOperationFilter>();
@@ -64,9 +66,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
             ValidateIssuer = true,
-            ValidateAudience = true
+            ValidateAudience = true,
+            //ValidIssuer = builder.Configuration.GetSection("Jwt:Issuer").Value!,
+            //ValidAudience = builder.Configuration.GetSection("Jwt:Audience").Value!,
+            ValidIssuer = "https://192.168.0.77:7001",
+            ValidAudience = "https://192.168.0.77:7001",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
+
         };
     });
 var app = builder.Build();
