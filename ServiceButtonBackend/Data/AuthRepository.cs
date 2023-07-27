@@ -6,6 +6,7 @@ using ServiceButtonBackend.Dtos.User;
 using ServiceButtonBackend.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace ServiceButtonBackend.Data
 {
     public class AuthRepository : IAuthRepository
@@ -78,7 +79,7 @@ namespace ServiceButtonBackend.Data
             //Ge The Permissions for the user details.
             List<UserPermission> dbPagePermissions = await _context.v_user_permission.Where(u => u.UserId == user.Id).ToListAsync();
 
-            authResponse.UserPermisssion = dbPagePermissions;
+            authResponse.UserPermission = dbPagePermissions;
 
             //Return Response
             return authResponse;
@@ -310,8 +311,18 @@ namespace ServiceButtonBackend.Data
             //Auth Response
             var authResponse = new AuthServiceRespone<string>();
 
-            //Get The User ID
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var jwtToken = tokenHandler.ReadJwtToken(accessToken);
             var userId = _userService.GetUserId();
+
+            //var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+            //int userId = 0;
+
+            //if(userIdClaim != null)
+            //{
+            //    userId = int.Parse(userIdClaim.Value);
+            //}
 
             //Get User From Database
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -324,16 +335,6 @@ namespace ServiceButtonBackend.Data
                 return authResponse;
             }
 
-            ////check the password is verified
-            //if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-            //{
-            //    authResponse.Success = false;
-            //    authResponse.Message = "Wrong Password.";
-            //    return authResponse;
-            //}
-
-            //Set the user data to response.Data
-            //response.Data = CreateToken(user);
             authResponse.token = CreateToken(user);
             var refreshToken = GenerateRefreshToken(user.Id);
             var myToken = SetRefreshToken(await refreshToken);
@@ -356,7 +357,7 @@ namespace ServiceButtonBackend.Data
             //Ge The Permissions for the user details.
             List<UserPermission> dbPagePermissions = await _context.v_user_permission.Where(u => u.UserId == user.Id).ToListAsync();
 
-            authResponse.UserPermisssion = dbPagePermissions;
+            authResponse.UserPermission = dbPagePermissions;
 
             return authResponse;
 

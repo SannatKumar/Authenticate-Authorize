@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
         {
-            policy.WithOrigins("http://192.168.0.77:8080", "https://192.168.0.77:8080").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            policy.WithOrigins("http://192.168.0.77:8080"/*, "https://192.168.0.77:8080"*/).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
         });
 });
 

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ServiceButtonBackend.Data
 {
@@ -13,6 +14,8 @@ namespace ServiceButtonBackend.Data
         Task<ServiceRespone<string>> RefreshToken(string refreshToken);
 
         Task<AuthServiceRespone<string>> GetMe();
+
+        IActionResult Logout();
 
     }
 }

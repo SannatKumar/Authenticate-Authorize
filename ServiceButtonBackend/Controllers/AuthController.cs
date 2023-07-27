@@ -1,5 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using ServiceButtonBackend.Dtos.User;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using ServiceButtonBackend.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ServiceButtonBackend.Controllers
 {
@@ -43,7 +51,7 @@ namespace ServiceButtonBackend.Controllers
                 // Set the cookie
                 Response.Cookies.Append("token", response.token, new Microsoft.AspNetCore.Http.CookieOptions
                 {
-                    SameSite = SameSiteMode.None,
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None,
                     Secure = true,
                     Expires = DateTime.UtcNow.AddDays(7),
                     HttpOnly = true // The cookie can only be accessed through HTTP requests (not JavaScript)
@@ -69,12 +77,13 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
+        //[Authorize]
         [HttpGet("me")]
         public async Task<ActionResult<AuthServiceRespone<string>>> GetMe()
+        //public IActionResult GetMe()
         {
-            //var refreshToken = Request.Cookies["refreshToken"];
             var response = await _authRepo.GetMe();
-            
+
 
             if (!response.Success)
             {
@@ -84,7 +93,16 @@ namespace ServiceButtonBackend.Controllers
             return Ok(response);
         }
 
+        //Log Out
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            //var response = _authRepo.Logout();
+
+            Response.Cookies.Delete("access_token");
 
 
+            return Ok();
+        }
     }
 }
